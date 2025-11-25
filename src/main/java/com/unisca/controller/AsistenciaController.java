@@ -12,6 +12,8 @@ import com.unisca.repository.AsistenciaRepository;
 import com.unisca.repository.EstudianteRepository;
 import com.unisca.repository.SesionRepository;
 
+import java.time.LocalDateTime; // Necesitas esta importación para la hora de registro
+
 @Controller
 @RequestMapping("/asistencia")
 public class AsistenciaController {
@@ -36,19 +38,27 @@ public class AsistenciaController {
 
     @PostMapping("/guardar")
     public String guardarAsistencia(@RequestParam Long sesionId,
-                                    @ModelAttribute("estudiante") Estudiante estudianteTemp) {
+                                    @ModelAttribute("estudiante") Estudiante estudianteForm) {
 
-        Estudiante estudiante = estudianteRepository.findByCodigo(estudianteTemp.getCodigo());
+        Estudiante estudianteExistente = estudianteRepository.findByCodigo(estudianteForm.getCodigo());
 
-        if (estudiante == null) {
-            estudiante = estudianteRepository.save(estudianteTemp);
+        if (estudianteExistente == null) {
+            estudianteExistente = estudianteRepository.save(estudianteForm);
+        } else {
+            estudianteExistente.setNombres(estudianteForm.getNombres());
+            estudianteExistente.setApellidos(estudianteForm.getApellidos());
+            estudianteExistente.setCarrera(estudianteForm.getCarrera());
+            estudianteExistente.setCorreo(estudianteForm.getCorreo());
+            estudianteRepository.save(estudianteExistente);
         }
 
         Sesion sesion = sesionRepository.findById(sesionId).orElse(null);
 
         Asistencia a = new Asistencia();
-        a.setEstudiante(estudiante);
+        a.setEstudiante(estudianteExistente);
         a.setSesion(sesion);
+        a.setEstado("ACTIVA"); 
+        a.setHoraRegistro(LocalDateTime.now()); 
         asistenciaRepository.save(a);
 
         return "redirect:/asistencia/listar?sesion=" + sesionId;
@@ -56,9 +66,9 @@ public class AsistenciaController {
 
     @GetMapping("/listar")
     public String listar(@RequestParam Long sesion, Model model) {
-        model.addAttribute("asistencias", asistenciaRepository.findAll());
+        model.addAttribute("asistencias", asistenciaRepository.findAll()); 
+        
         model.addAttribute("sesionId", sesion);
         return "asistencia-list";
     }
 }
-

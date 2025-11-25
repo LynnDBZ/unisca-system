@@ -9,15 +9,35 @@
 
     <div class="container mt-4">
         <h2>Registro de Asistencia</h2>
-        <p>Ingresa tu código de estudiante para registrar tu asistencia a la sesión.</p>
+        <p>Ingresa tus datos completos para registrar tu asistencia a la sesión.</p>
 
         <form th:action="@{/asistencia/guardar}" method="post" th:object="${estudiante}">
             
             <input type="hidden" name="sesionId" th:value="${sesionId}" />
             
             <div class="mb-3">
-                <label for="codigo" class="form-label">Código de Estudiante:</label>
+                <label for="codigo" class="form-label">Código de Estudiante (CLAVE):</label>
                 <input type="text" class="form-control" id="codigo" name="codigo" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="nombres" class="form-label">Nombres:</label>
+                <input type="text" class="form-control" id="nombres" name="nombres" required />
+            </div>
+            
+            <div class="mb-3">
+                <label for="apellidos" class="form-label">Apellidos:</label>
+                <input type="text" class="form-control" id="apellidos" name="apellidos" required />
+            </div>
+            
+            <div class="mb-3">
+                <label for="carrera" class="form-label">Carrera:</label>
+                <input type="text" class="form-control" id="carrera" name="carrera" required />
+            </div>
+            
+            <div class="mb-3">
+                <label for="correo" class="form-label">Correo Electrónico:</label>
+                <input type="email" class="form-control" id="correo" name="correo" required />
             </div>
             
             <button type="submit" class="btn btn-success">Registrar Asistencia</button>
